@@ -9,13 +9,13 @@
 import UIKit
 import AVFoundation
 
-class VIWaveformNodeView: UIView {
+public class VIWaveformNodeView: UIView {
     
     override open class var layerClass: Swift.AnyClass {
         return CAShapeLayer.self
     }
     
-    var waveformLayer: CAShapeLayer {
+    public var waveformLayer: CAShapeLayer {
         return layer as! CAShapeLayer
     }
     
@@ -39,7 +39,7 @@ class VIWaveformNodeView: UIView {
         waveformLayer.strokeColor = UIColor.lightGray.cgColor
     }
     
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         redraw()
     }
@@ -84,7 +84,7 @@ class VIWaveformNodeView: UIView {
 }
 
 extension VIWaveformNodeView: VIWaveformPresentation {
-    func updateWaveformPoint(_ data: [Float]) {
+    public func updateWaveformPoint(_ data: [Float]) {
         pointInfo.removeAll()
         for (index, point) in data.enumerated() {
             let point = CGPoint(x: CGFloat(index), y: CGFloat(point))

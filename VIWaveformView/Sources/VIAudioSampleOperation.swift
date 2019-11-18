@@ -45,8 +45,7 @@ public class VIAudioSampleOperation {
             let reader = try AVAssetReader(asset: asset)
             
             let loaders = asset.tracks(withMediaType: .audio).map { (track) -> AssetTrackSampleLoader in
-                let loader = AssetTrackSampleLoader(track: track)
-                loader.widthPerSecond = widthPerSecond
+                let loader = AssetTrackSampleLoader(track: track, actualWidthPerSecond: widthPerSecond)
                 return loader
             }
             self.loaders = loaders
@@ -125,7 +124,8 @@ public class AssetTrackSampleLoader {
     
     public private(set) var trackOutput: AVAssetReaderTrackOutput?
     public var track: AVAssetTrack
-    public init(track: AVAssetTrack) {
+    public init(track: AVAssetTrack, actualWidthPerSecond: CGFloat) {
+        self.widthPerSecond = actualWidthPerSecond
         self.track = track
         generateTrackOutput()
     }

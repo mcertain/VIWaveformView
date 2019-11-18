@@ -25,7 +25,7 @@ public class VIWaveformView: UIView {
     fileprivate(set) var actualWidthPerSecond: CGFloat = 0
     public var minWidthPerSecond: CGFloat = 5
     /// TimeLine Min width
-    public var minWidth: CGFloat = 100
+    public var minWidth: CGFloat = 150
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -69,7 +69,7 @@ public class VIWaveformView: UIView {
 }
 
 public extension VIWaveformView {
-    public func loadVoice(from asset: AVAsset, completion: @escaping ((Error?) -> Void)) -> Cancellable {
+    func loadVoice(from asset: AVAsset, completion: @escaping ((Error?) -> Void)) -> Cancellable {
         let width = frame.width + 300
         let cancellable = Cancellable()
         asset.loadValuesAsynchronously(forKeys: ["duration", "tracks"], completionHandler: { [weak self] in
@@ -88,13 +88,9 @@ public extension VIWaveformView {
             }
             
             let duration = asset.duration.seconds
+            // Define the actual width per second based on the actual duration of the audio
+            strongSelf.actualWidthPerSecond = strongSelf.minWidth / CGFloat(duration)
             
-            // if fill the timeline view don't have enough time, per point respresent less time
-            if CGFloat(duration) * strongSelf.minWidthPerSecond < strongSelf.minWidth {
-                strongSelf.actualWidthPerSecond = strongSelf.minWidth / CGFloat(duration)
-            } else {
-                strongSelf.actualWidthPerSecond = strongSelf.minWidthPerSecond
-            }
             let operation = VIAudioSampleOperation(widthPerSecond: strongSelf.actualWidthPerSecond)
             if let queue = strongSelf.operationQueue {
                 operation.operationQueue = queue
@@ -103,7 +99,7 @@ public extension VIWaveformView {
                 var points: [Float] = []
                 if let audioSample = audioSamples.first {
                     points = audioSample.samples.map({ (sample) -> Float in
-                        return Float(sample / 20000.0)
+                        return Float(sample / 5000.0)
                     })
                 }
                 strongSelf.viewModel.points = points
@@ -166,7 +162,7 @@ extension VIWaveformView: UICollectionViewDataSource, UICollectionViewDelegateFl
         return cell
     }
     
-    private func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var size = CGSize.zero
         let item = viewModel.items[indexPath.item]
         size.width = CGFloat(item.count)
