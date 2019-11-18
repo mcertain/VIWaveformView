@@ -69,7 +69,7 @@ public class VIWaveformView: UIView {
 }
 
 public extension VIWaveformView {
-    func loadVoice(from asset: AVAsset, completion: @escaping ((Error?) -> Void)) -> Cancellable {
+    func loadVoice(from asset: AVAsset, heightScaling: CGFloat, completion: @escaping ((Error?) -> Void)) -> Cancellable {
         let width = frame.width + 300
         let cancellable = Cancellable()
         asset.loadValuesAsynchronously(forKeys: ["duration", "tracks"], completionHandler: { [weak self] in
@@ -97,9 +97,10 @@ public extension VIWaveformView {
             }
             func updatePoints(with audioSamples: [VIAudioSample]) {
                 var points: [Float] = []
+                let scaledSampleHeight = CGFloat(20000.0) * heightScaling
                 if let audioSample = audioSamples.first {
                     points = audioSample.samples.map({ (sample) -> Float in
-                        return Float(sample / 5000.0)
+                        return Float(sample / scaledSampleHeight)
                     })
                 }
                 strongSelf.viewModel.points = points

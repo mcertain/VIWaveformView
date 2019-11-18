@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import VIWaveformView
 
 class ViewController: UIViewController {
 
@@ -26,10 +27,12 @@ class ViewController: UIViewController {
         waveformView.topAnchor.constraint(equalTo: view.topAnchor, constant: 65).isActive = true
         waveformView.heightAnchor.constraint(equalToConstant: 80).isActive = true
         
+        let heightScalingFactor = CGFloat(0.75)
+        
         waveformView.layoutIfNeeded()
         if let url = Bundle.main.url(forResource: "Moon River", withExtension: "mp3") {
             let asset = AVAsset.init(url: url)
-            _ = waveformView.loadVoice(from: asset, completion: { (asset) in
+            _ = waveformView.loadVoice(from: asset, heightScaling: heightScalingFactor, completion: { (asset) in
             })
         }
     }
